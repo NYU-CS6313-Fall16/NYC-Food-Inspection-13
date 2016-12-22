@@ -1,0 +1,772 @@
+
+<html>  
+  <head>  
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="icon.jpg">
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="./Dashboard Template for Bootstrap_files/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="./Dashboard Template for Bootstrap_files/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="./Dashboard Template for Bootstrap_files/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="./Dashboard Template for Bootstrap_files/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+        <meta charset="utf-8">  
+        <title>Food Inspection</title>
+      <link rel="stylesheet" href="dist/autocomplete.css">
+      <script type="text/javascript" src="dist/jquery.js"></script>
+      <script type="text/javascript" src="dist/autocomplete.js"></script>
+  </head> 
+  <style>
+      .path{               /*yjm*/
+          stroke: #9E9E9E;
+          stroke-width: 1px;
+          fill-opacity: 0.7;
+      }
+      .circle{              /*yjm*/
+          fill-opacity: 0.9;
+      }
+      .pie{                 /*yjm*/
+          padding: 5;
+      }
+      .arc{                 /*yjm*/
+          stroke: #fff;
+      }
+      .legend {             /*yjm*/                                    
+        font-size: 12px;                           
+      }                                           
+      rect {                /*yjm*/                                        
+        stroke-width: 2;                 
+      }
+      #tooltip{             /*yjm*/
+        position : absolute;
+        top:0;
+        left:0;
+        background-color: rgba(255,255,255,0.8);
+        visibility: hidden;
+        transition: all 0.5s;
+      }
+      #year {
+          width: 20px;
+      }
+      #grade {
+          width: 20px;
+      }
+      #map {
+          width:1200px;
+          height:700px;
+      }
+      .container {
+          width:300px;
+          height: 300px;
+      }
+      .line-svg {
+          width:250px;
+          height:250px;
+      }
+    .filter {
+        position:absolute;
+        top:150px;
+        left:19px;
+        background:#FFF;
+        border-radius:8px;
+        border:1px solid #989898;
+        box-shadow:0 0 10px rgba(0,0,0,0.4);
+        width:200px;
+        padding-bottom:25px;
+    }
+
+    .filter h3 {
+        font-size:20px;
+        padding:15px 35px 0;
+    }
+
+    .filter ul li {
+        list-style:none;
+        font-size:14px;
+        color:#39497c;
+        font-style:italic;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .filter ul li.active {
+        background-image:url(../image/filter-active.png);
+    }
+
+    .filter ul li.title {
+        border-bottom:1px dashed #c9c9c9;
+/*        padding:10px 15px;*/
+        font-style:normal;
+        font-size:16px;
+        color:#373737;
+        text-decoration: none;
+        margin-bottom:10px;
+        background:none;
+    }
+
+    .filter ul li.title a {
+        float:right;
+        font-style:italic;
+        font-size:14px;
+        color:#535353;
+    }
+
+    .filter ul + ul {
+        margin-top:10px;
+    }
+    ul#boroughs {
+        left:auto;
+        right:-500px;
+        width:432px;
+        padding:15px 15px 30px;
+        transition:0.5s all;
+        z-index:99;
+    }
+
+    ul#boroughs.show {
+        right:-10px;
+    }
+
+    ul#boroughs li {
+        list-style:none;
+        width:50%;
+        float:left;
+        font-size:13px;
+        color:#39497c;
+        font-style:italic;
+        padding: 1px 0;
+    }
+
+    ul#boroughs li span {
+        text-decoration: underline;
+    }
+
+
+    ul#boroughs li span.count {
+        text-decoration:none;
+        color:#f98204;
+        padding-left:5px;
+    }
+
+    ul#boroughs li.title {
+        width:100%;
+        font-style:oblique;
+        font-size:20px;
+        color:#373737;
+        text-decoration: none;
+        margin-bottom:10px;
+        padding-right:15px;
+    }
+
+    ul#boroughs li.title a {
+        float:right;
+        font-style:italic;
+        font-size:14px;
+        color:#535353;
+    }
+
+    ul#boroughs li span {
+        text-decoration:none;
+    }
+
+    ul#rating li span {
+        width:11px;
+        height:11px;
+        display:inline-block;
+        margin-right:8px;
+    }
+      .col-sm-3 {
+          position: absolute;
+      }
+      .navbar-inverse .navbar-brand {
+          color: aliceblue;
+      }
+  </style>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand">NYC Food Inspection</a>
+        </div>
+
+          <form class="navbar-form navbar-right">
+<!--                <div float="right" id="search">-->
+<!--                    <div class="wrapper">-->
+                        <div id="search-form"></div>
+<!--                    </div>-->
+<!--                </div>-->
+          </form>
+
+<!--        </div>-->
+      </div>
+
+    </nav>
+        
+            <div class="col-sm-3 col-md-12 sidebar">
+                <div float="right" id="map"></div>
+                <div id = tooltip></div>
+        <div class="filter">
+            <h3>Filters</h3>
+           <ul id="rating">
+               <li class="title">Years:</li>
+               <li><label>2014<input type = "radio", name = "year" value="2014" id = "year" onclick="setYearGrade(this.value, 0)">
+                   </label></li>
+                <li><label>2015<input type = "radio", name = "year" value="2015" id = "year" onclick="setYearGrade(this.value, 0)">
+                    </label></li>
+                <li><label>2016<input type = "radio", name = "year" value="2016" id = "year" onclick="setYearGrade(this.value, 0)">
+                    </label></li>
+
+            </ul>
+           <ul id="rating">
+               <li class="title">Ratings:</li>
+                <li><label>A<input type = "radio", name = "grade" value="A" id = "grade" onclick="setYearGrade(this.value, 1)">
+                    </label></li>
+                <li><label>B<input type = "radio", name = "grade" value="B" id = "grade" onclick="setYearGrade(this.value, 1)">
+                    </label></li>
+                <li><label>C<input type = "radio", name = "grade" value="C" id = "grade" onclick="setYearGrade(this.value, 1)">
+                    </label></li>
+                <li><label>All<input type = "radio", name = "grade" value="All" id = "grade" onclick="setYearGrade(this.value, 1)">
+                    </label></li>
+            </ul>
+            <ul id="rating">
+                <li class="title">Types:</li>
+                <li><label>Chinese<input type = "radio", name = "cuisine" value="Chinese" id = "cuisine" onclick="setYearGrade(this.value, 2)">
+                    </label></li>
+                <li><label>American<input type = "radio", name = "cuisine" value="American" id = "cuisine" onclick="setYearGrade(this.value, 2)">
+                    </label></li>
+                <li><label>Italian<input type = "radio", name = "cuisine" value="Italian" id = "cuisine" onclick="setYearGrade(this.value, 2)">
+                    </label></li>
+                <li><label>Chicken<input type = "radio", name = "cuisine" value="Chicken" id = "cuisine" onclick="setYearGrade(this.value, 2)">
+                    </label></li>
+                <li><label>Pizza<input type = "radio", name = "cuisine" value="Pizza" id = "cuisine" onclick="setYearGrade(this.value, 2)">
+                    </label></li>
+                <li><label>Hamburgers<input type = "radio", name = "cuisine" value="Hamburgers" id = "cuisine" onclick="setYearGrade(this.value, 2)">
+                    </label></li>
+            </ul>
+            <ul><button type="button" class="btn btn-primary" onclick="update()">Submit</button></ul>
+        </div>
+            <ul class="filter show" id="boroughs">
+                <li class="title">Trend</li>
+                <div class="container">
+                    <!--<svg width="100%" height="100%" id="svg1"></svg>-->
+                </div>
+            </ul>
+            </div>
+
+
+<!--    </div>-->
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/topojson.v1.min.js" charset="utf-8"></script>
+<script>
+	
+var colorScale = d3.scale.category10();
+var circleColorScale = d3.scale.quantize()
+    .domain([17, 26])
+    .range(["#1a9641", "#fdae61", "#d7191c"]);
+var sizeScale = d3.scale.linear()
+            .domain([0, 13000])
+            .range([2, 10]);
+
+var centered;
+var width = 1200,
+	height = 700;
+    
+var svg = d3.select("#map").append("svg")
+            .attr("width", width).attr("height", height)
+            .append("g");
+
+var projection = d3.geo.mercator()
+						.center([-73.96, 40.72])
+						.scale(70000)
+    					.translate([width/2, height/2]);
+	
+var path = d3.geo.path().projection(projection);
+
+//define a global variable outside the layout function
+var query = "$select=zipcode,count(*),avg(score)&$group=zipcode";
+    
+var query_pie = "$select=grade,count(*)&$group=grade"; /*yjm*/
+/* where array is used to store the query terms, if a new condition generated, push it to the array
+*example: grade is required to be B -------> where.push("grade = 'B'");
+*/
+var where = [];
+var conditions = "";
+
+function update() {
+    layout();
+    var radios = document.getElementsByTagName("input");
+    for (var index in radios) {
+        radios[index].checked = false;
+    }
+    where.splice(0, where.length);
+}
+
+function setYearGrade(d, flag) {
+    if (flag === 0) {
+        var year = d;
+        var nextYear = +year + 1;
+        var parseYear = "inspection_date>'" + year +"-01-01T12:00:00' AND inspection_date<'" + nextYear + "-01-01T12:00:00'"
+        var index = where.indexOf(parseYear);
+
+        where.push(parseYear);
+        if (where.length == 0) {
+            conditions = "";
+        } else {
+            conditions="&$where=" + where.join(" AND ");
+        }
+    } else if (flag == 1){
+        var score = d;
+        var grade_hi;
+        var grade_lo;
+        if (score == "A") {
+            grade_hi = 20;
+            grade_lo = 17;
+        } else if (score == "B") {
+            grade_hi = 23;
+            grade_lo = 20;
+        } else if (score == "C") {
+            grade_hi = 26;
+            grade_lo = 23;
+        } else {
+            grade_hi = -1;
+            grade_lo = -1;
+        }
+        var parseScore = "score>='" + grade_lo +"' AND score<'" + grade_hi + "'"
+        var index = where.indexOf(parseScore);
+        if(index !== -1) {
+            where.splice(index, 1);
+        } else {
+            where.push(parseScore);
+        }
+        if (where.length == 0) {
+            conditions = "";
+        } else {
+            conditions="&$where=" + where.join(" AND ");
+        }
+        if (grade_hi == -1) {
+           conditions = ""; 
+        }
+    } else {
+        var cuisine_type = d;
+        var parseType = "cuisine_description = '" + cuisine_type +"'";
+        var index = where.indexOf(parseType);
+
+        if(index !== -1) {
+        where.splice(index, 1);
+        } else {
+        where.push(parseType);
+        }
+        if (where.length == 0) {
+        conditions = "";
+        } else {
+        conditions="&$where=" + where.join(" AND ");
+        }
+    }
+
+}
+    
+/*
+* layout function is used to generate the layout of the map and the circle
+* once you make a change on the data query, call this function again to update the figure
+* */
+
+    layout();
+    
+function pie(zip, name, conditions){      /*yjm*/
+    var code = zip.toString();
+    if(conditions.length === 0)
+        conditions = "&$where=zipcode=";
+    else
+        conditions += "AND zipcode=";
+    d3.json("https://data.cityofnewyork.us/resource/xx67-kt59.json?" + query_pie + conditions +"'"+code+"'", function(error, restdata) {
+        if (error)
+            return error;
+        //console.log(restdata);
+        var values = [];
+        var j = 0;
+        for (var i = 0; i < restdata.length; i++) {
+            var count = parseInt(restdata[i].count, 10);
+            if(restdata[i].grade == "A" || restdata[i].grade == "B" || restdata[i].grade == "C"){
+                values[j] ={
+                    grade: restdata[i].grade,
+                    count: count
+                };
+                ++j;
+            }
+        }
+        //console.log(values);
+        
+        values.sort(function(a, b){
+            return a.grade > b.grade;
+        });
+        //console.log(values);
+        var color = d3.scale.ordinal()
+          .range(["#1a9641", "#fdae61", "#d7191c"]);
+        
+        var svg = d3.select('#tooltip').append("svg")
+          .attr("width", 400)
+          .attr("height", 400);
+        
+        var p_chart = svg
+          .append('g')
+          .attr('transform', 'translate(' + 200 +
+            ',' + 225 + ')');
+        
+        var title = svg.append("text")
+          .attr("class", "title")
+          .attr("x", 200)
+          .attr("y", 40)
+          .attr("text-anchor", "middle")
+          .text(name)
+          .attr("font-size",30);
+        
+        var arc = d3.svg.arc()
+          .innerRadius(110)
+          .outerRadius(160);
+    
+        var pie = d3.layout.pie()
+          .value(function(d) { return d.count; })
+          .sort(null);
+
+        var path = p_chart.selectAll('.arc')
+          .data(pie(values))
+          .enter()
+          .append("g")
+          .attr("class", "arc")
+          .append('path')
+          .attr('d', arc)
+          .attr('fill', function(d) { return color(d.data.grade); });
+    
+        var legendRectSize = 18;                        
+        var legendSpacing = 4;
+    
+        var legend = p_chart.selectAll('.legend')                     
+          .data(color.domain())                                   
+          .enter()                                                
+          .append('g')                                            
+          .attr('class', 'legend')                                
+          .attr('transform', function(d, i) {                     
+            var height = legendRectSize + legendSpacing;          
+            var offset =  height * color.domain().length / 2;     
+            var horz = -2 * legendRectSize;                       
+            var vert = i * height - offset;                       
+            return 'translate(' + horz + ',' + vert + ')';       
+          });                                                     
+
+        legend.append('rect')                                     
+          .attr('width', legendRectSize)                          
+          .attr('height', legendRectSize)                         
+          .style('fill', color)                                  
+          .style('stroke', color);                                
+
+        legend.append('text')                                    
+          .attr('x', legendRectSize + legendSpacing + 15)         
+          .attr('y', legendRectSize - legendSpacing)             
+          .text(function(d) { return d; });      
+    });
+    
+    d3.select("#tooltip").selectAll("*").remove();
+    
+}
+    
+function layout() {    /*yjm*/
+    d3.json("map.topojson", function(error, toporoot) {
+        if (error)
+            return console.error(error);
+        svg.selectAll("*").remove();
+        //输出newyork.topojson的对象
+        //console.log(toporoot);
+
+        //将TopoJSON对象转换成GeoJSON，保存在georoot中
+        var georoot = topojson.feature(toporoot, toporoot.objects.collection);
+
+        //输出GeoJSON对象
+        //console.log(georoot);
+        
+        var newyork = svg;
+        
+        var districts = newyork.selectAll("path")
+            .data(georoot.features)
+            .enter()
+            .append("path")
+            .attr("class", "path")
+            .style("fill", "#f7f7f7")
+            .attr("d", path)
+            .on("click", clicked);
+            
+            function clicked(d) {
+                var x, y, k;
+                if (d && centered !== d) {
+                    var centroid = path.centroid(d);
+                    x = centroid[0];
+                    y = centroid[1];
+                    k = 4;
+                    centered = d;
+                }
+                else {
+                    x = width / 2;
+                    y = height / 2;
+                    k = 1;
+                    centered = null;
+                }
+                newyork.selectAll("path")
+                    .classed("active", centered && function (d) {
+                            return d == centered;
+                        });
+                newyork.transition()
+                    .duration(750)
+                    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + 5 + ")translate(" + -x + "," + -y + ")")
+                    .style("stroke-width", 1.5 / k + "px");
+            }
+
+            var dorling = newyork.selectAll("circle").data(georoot.features).enter()
+            .append("circle")
+            .attr("class", "circle")
+            .each(function (it) {
+                it.properties.r = 100;
+                it.properties.c = path.centroid(it);
+                it.properties.x = 400;
+                it.properties.y = 300;
+            });
+            dorling.attr("cx", function (it) {
+                return it.properties.x + it.properties.c[0] - 400;
+            });
+            dorling.attr("cy", function (it) {
+                return it.properties.y + it.properties.c[1] - 300;
+            });
+        
+            var res = "https://data.cityofnewyork.us/resource/xx67-kt59.json?" + query + conditions;
+        console.log(res);
+        
+            d3.json("https://data.cityofnewyork.us/resource/xx67-kt59.json?" + query + conditions, function(error, restdata) {
+                if (error)
+                    return error;
+                console.log(restdata);
+                var values = [];
+                for (var i = 0; i < restdata.length; i++) {
+                    var name = restdata[i].zipcode;
+                    var count = parseInt(restdata[i].count, 10);
+                    var score = parseFloat(restdata[i].avg_score);
+                    values[name] = {
+                        "count": count,
+                        "score": score
+                    };
+                }
+                dorling.attr("r", function (it) {
+                    if (typeof values[it.properties.postalCode] !== 'undefined') {
+//                        console.log(values[it.properties.postalCode]);
+                        return sizeScale(values[it.properties.postalCode].count);
+                    }
+                    return 0;
+                });
+                dorling.attr("fill", function (it) {
+                    if (typeof values[it.properties.postalCode] !== 'undefined') {
+                        return circleColorScale(values[it.properties.postalCode].score);
+                    }
+                    return circleColorScale(0);
+                });
+            });
+            dorling.on("click", function(d, i)
+                {
+                    d3.select("#tooltip").style({
+                        visibility: "visible",
+                        top: d3.event.clientY + 5 + "px",
+                        left: d3.event.clientX + 5 + "px",
+                        opacity: 1
+                    });
+                    pie(d.properties.postalCode, d.properties.PO_NAME, conditions);
+                });
+            dorling.on("mouseleave", function(d, i){
+                    d3.select("#tooltip").style({
+                        visibility: "hidden",
+                        opacity: 0
+                    })
+                });
+    });
+}
+
+
+var proposals = [];
+d3.json("https://data.cityofnewyork.us/resource/xx67-kt59.json?$select=dba&$group=dba", function(err, data){
+    if (err) {
+        console.log(err);
+        return;
+    }
+    for (var i = 0; i < data.length; i++) {
+        proposals[i] = data[i].dba;
+    }
+    $(document).ready(function(){
+        $('#search-form').autocomplete({
+            hints: proposals,
+            width: 300,
+            height: 30,
+            onSubmit: function(text) {
+                $('#message').html('Selected: <b>' + text + '</b>');
+                var index = where.indexOf("dba='" +text + "'");
+                if (index == -1) {
+                    where.push("dba='" +text + "'");
+                }
+                if (where.length === 0) {
+                    conditions = "";
+                } else {
+                    conditions="&$where=" + where.join(" AND ");
+                }
+                layout();
+                index = where.indexOf("dba='" +text + "'");
+                where.splice(index, 1);
+                generateLineChart(text);
+            }
+        });
+    });
+})
+var searched = [];
+var generated = [];
+function generateLineChart(text) {
+    d3.select(".container").selectAll("*").remove();
+    var width = 250, height = 250;
+    // SVG画布边缘与图表内容的距离
+    var padding = {top: 20, right: 20, bottom: 20, left: 20};
+    // 创建一个分组用来组合要画的图表元素
+    var main = d3.select('.container').append('svg').attr('class', 'line-svg')
+        .append('g')
+        .classed('main', true)
+        .attr('transform', "translate(" + padding.top + ',' + padding.left + ')');
+    var dataset = [];
+    if (searched.indexOf(text) === -1) {
+        searched.push(text);
+        dataset = [
+            {x: 2014, y: Math.floor(Math.random() * 4)},
+            {x: 2015, y: Math.floor(Math.random() * 4) + 1},
+            {x: 2016, y: Math.floor(Math.random() * 4) + 1}
+        ];
+        generated[text] = dataset;
+    } else {
+        dataset = generated[text];    
+    } 
+    d3.json("https://data.cityofnewyork.us/resource/xx67-kt59.json?dba=" + text, function (err, data) {
+        console.log(dataset);
+        var xScale = d3.scale.linear()
+            .domain(d3.extent(dataset, function (d) {
+                return d.x
+            }))
+            .range([0, width - padding.left - padding.right]);
+        // 创建y轴的比例尺(线性比例尺)
+        var yScale = d3.scale.linear()
+            .domain([0, d3.max(dataset, function (d) {
+                return d.y;
+            })])
+            .range([height - padding.top - padding.bottom, 0]);
+        // 创建x轴
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient('bottom')
+            .ticks(2);
+        // 创建y轴
+        var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient('left')
+            .ticks(4)
+            .tickFormat(function (d) {
+                switch (d) {
+                    case 0:
+                        return 'N';
+                    case 1:
+                        return 'Z';
+                    case 2:
+                        return 'C';
+                    case 3:
+                        return 'B';
+                    case 4:
+                        return 'A';
+                }
+            });
+        // 创建x轴的比例尺(线性比例尺)
+
+        // 添加SVG元素并与x轴进行“绑定”
+        main.append('g')
+            .attr('class', 'axis')
+            .attr('transform', 'translate(0,' + (height - padding.top - padding.bottom) + ')')
+            .call(xAxis);
+        // 添加SVG元素并与y轴进行“绑定”
+        main.append('g')
+            .attr('class', 'axis')
+            .call(yAxis);
+        // 添加折线
+        var line = d3.svg.line()
+            .x(function (d) {
+                return xScale(d.x)
+            })
+            .y(function (d) {
+                return yScale(d.y);
+            })
+            // 选择线条的类型
+            .interpolate('linear');
+        // 添加path元素，并通过line()计算出值来赋值
+        main.append('path')
+            .attr('class', 'line-dyc')
+            .attr('d', line(dataset));
+        // 添加点
+        main.selectAll('circle')
+            .data(dataset)
+            .enter()
+            .append('circle')
+            .attr('cx', function (d) {
+                return xScale(d.x);
+            })
+            .attr('cy', function (d) {
+                return yScale(d.y);
+            })
+            .attr('r', 3.5)
+            .attr('fill', function (d, i) {
+                return getColor(i);
+            })
+            .on('mouseover', function () {
+                d3.select(this).transition().duration(500).attr('r', 5);
+            })
+            .on('mouseout', function () {
+                d3.select(this).transition().duration(500).attr('r', 3.5);
+            });
+
+        function getColor(idx) {
+            var palette = [
+                '#2ec7c9', '#b6a2de', '#5ab1ef', '#ffb980', '#d87a80',
+                '#8d98b3', '#e5cf0d', '#97b552', '#95706d', '#dc69aa',
+                '#07a2a4', '#9a7fd1', '#588dd5', '#f5994e', '#c05050',
+                '#59678c', '#c9ab00', '#7eb00a', '#6f5553', '#c14089'
+            ]
+            return palette[idx % palette.length];
+        }
+
+    })
+}
+
+</script>
+		
+</body>  
+</html>  
